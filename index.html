@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculate carbon emissions from burning plastic, explore creative ways to repurpose plastics, stay updated with environmental news, and register as a waste management partner!">
+    <title>Earth Hero: Plastic Impact Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #a7f3d0, #93c5fd);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 2rem;
+        }
+
+        .container:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-weight: 900;
+            background: linear-gradient(to right, #22c55e, #2563eb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            transition: all 0.3s ease;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #22c55e, #10b981);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            background: linear-gradient(to right, #16a34a, #059669);
+        }
+
+        .btn::after {
+            content: '🌱';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.7;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 240px;
+            background: #1e3a8a;
+            color: #ffffff;
+            text-align: center;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: absolute;
+            z-index: 10;
+            top: 140%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(10px);
+        }
+
+        input, select, textarea {
+            transition: all 0.3s ease;
+            border: 2px solid #d1d5db;
+            border-radius: 0.375rem;
+            background: #f9fafb;
+            padding: 0.75rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3);
+            outline: none;
+        }
+
+        #earthCanvas {
+            border: 4px solid #d1d5db;
+            border-radius: 1.5rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            background: #e0f2fe;
+        }
+
+        .motivation-text {
+            background: linear-gradient(to right, #fef3c7, #fef3c7);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            color: #1f2937;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-box {
+            background: #ecfdf5;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .disposal-item {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .disposal-item::before {
+            content: '🌿';
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .news-section, .register-section {
+            background: #f0fdf4;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #ffffff;
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .news-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .news-item a {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .news-item a:hover {
+            text-decoration: underline;
+        }
+
+        .creative-section {
+            background: #f0fdf4;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .creative-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #ffffff;
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .creative-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .creative-item a {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .creative-item a:hover {
+            text-decoration: underline;
+        }
+
+        .creative-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        /* Chatbot Styles */
+        #chatbotContainer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+
+        #chatbotHeader {
+            background: linear-gradient(to right, #22c55e, #10b981);
+            color: white;
+            padding: 1rem;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chatbotMessages {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            flex-grow: 1;
+        }
+
+        .chatbot-message {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            white-space: pre-wrap; /* Preserve line breaks */
+        }
+
+        .bot-message {
+            background: #e0f2fe;
+            color: #1e3a8a;
+            margin-right: 10%;
+        }
+
+        .user-message {
+            background: #ecfdf5;
+            color: #166534;
+            margin-left: 10%;
+            text-align: right;
+        }
+
+        #chatbotInput {
+            border: none;
+            padding: 0.75rem;
+            border-top: 1px solid #d1d5db;
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+            width: 100%;
+            outline: none;
+        }
+
+        #chatbotToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(to right, #22c55e, #10b981);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #chatbotToggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        #chatbotToggle::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 sm:p-6">
+    <div class="container p-6 sm:p-8 w-full max-w-5xl">
+        <h1 class="text-3xl sm:text-5xl font-bold text-center mb-6">Earth Hero: Plastic Impact Calculator</h1>
+        <p class="motivation-text text-sm sm:text-base">You have the power to protect our planet! Calculate plastic emissions, get creative with repurposing, stay informed, and make Earth smile! 🌍</p>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Left: Calculator -->
+            <div class="flex-1">
+                <div class="mb-6">
+                    <label for="plasticType" class="block text-sm font-bold text-gray-800 mb-2">Choose Your Plastic Type</label>
+                    <div class="tooltip relative">
+                        <select id="plasticType" class="w-full p-3 border text-gray-800" onchange="calculateEmission()">
+                            <option value="PMMA" data-tooltip="Used in signs and displays; recyclable with specialized facilities. Be a hero by recycling properly!">Acrylic (PMMA)</option>
+                            <option value="PC" data-tooltip="Found in eyewear and protective shields; recyclable in specific programs. Your choice saves Earth!">Polycarbonate (PC)</option>
+                            <option value="PE" data-tooltip="Common in packaging and containers; widely recyclable. Make a difference with recycling!">Polyethylene (PE)</option>
+                            <option value="PP" data-tooltip="Used in yogurt containers and straws; recyclable in many areas. Make Earth proud with recycling!">PP (Polypropylene)</option>
+                            <option value="PET" data-tooltip="Used in water bottles and food containers; highly recyclable. You can make a difference by recycling!">PET (Polyethylene Terephthalate)</option>
+                            <option value="PVC" data-tooltip="Used in pipes and packaging; requires specialized recycling. Be a hero by disposing safely!">PVC (Polyvinyl Chloride)</option>
+                            <option value="ABS" data-tooltip="Found in electronics and toys; recyclable at specialized centers. Your actions help reduce waste!">ABS (Acrylonitrile-Butadiene-Styrene)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="mass" class="block text-sm font-bold text-gray-800 mb-2">Plastic Mass (kg)</label>
+                    <input type="number" id="mass" min="0" step="0.01" oninput="calculateEmission()" class="w-full p-3 border text-gray-800" placeholder="Enter mass in kg" aria-label="Mass of plastic in kilograms">
+                </div>
+
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                    <button onclick="calculateEmission()" class="btn flex-1 p-3">Calculate Your Impact</button>
+                </div>
+                <button onclick="shareResult()" class="btn w-full p-3 mt-4 bg-blue-600 hover:bg-blue-700">Share Your Green Impact</button>
+
+                <div id="result" class="result-box hidden">
+                    <h2 class="text-xl font-bold text-green-800">Your Impact</h2>
+                    <p id="emissionResult" class="text-gray-800" aria-live="polite"></p>
+                    <h3 class="text-lg font-bold mt-4 text-green-800">Eco-Friendly Actions</h3>
+                    <ul id="disposalMethods" class="list-none pl-0 text-gray-800"></ul>
+                    <p class="text-sm text-gray-600 mt-3">Explore more green solutions at <a href="https://www.wm.com" class="text-blue-600 hover:underline font-semibold">WM.com</a>.</p>
+                </div>
+            </div>
+
+            <!-- Right: Healing Earth Animation -->
+            <div class="flex-1 flex flex-col justify-center items-center">
+                <canvas id="earthCanvas" width="400" height="400"></canvas>
+                <div id="earthMessage" class="mt-6 text-center text-gray-800 text-sm font-medium">
+                    <p id="emissionMessage">Calculate emissions to see how you can save Earth!</p>
+                    <button id="saveEarthBtn" class="btn bg-green-600 p-3 mt-3 hidden" onclick="showDisposalOptions()">I’ll Save Earth!</button>
+                    <ul id="disposalOptions" class="list-none pl-0 text-gray-800 mt-3 hidden"></ul>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <!-- Waste Management Registration Section -->
+        <div class="register-section">
+            <h2 class="text-xl font-bold text-green-800 mb-4">Register as a Waste Management Partner</h2>
+            <p class="text-sm text-center text-gray-600 mb-4">Are you a waste management company or individual helping to reduce plastic waste? Register to join our network and amplify your impact! 🌱</p>
+            <div id="registerFormContainer">
+                <form id="registerForm" action="https://formspree.io/f/xnnvzena" method="POST" class="space-y-6">
+                    <div class="mb-4">
+                        <label for="name" class="block text-sm font-bold text-gray-800 mb-2">Name (Company or Individual)</label>
+                        <input type="text" name="name" id="name" required class="w-full p-3 text-gray-800" placeholder="Enter your name or company name" aria-label="Name of company or individual">
+                        <p id="name-error" class="error-message">Please enter a valid name (at least 2 characters).</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="city" class="block text-sm font-bold text-gray-800 mb-2">City</label>
+                        <input type="text" name="city" id="city" required class="w-full p-3 text-gray-800" placeholder="Enter your city" aria-label="City">
+                        <p id="city-error" class="error-message">Please enter a valid city name (at least 2 characters).</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="contactNumber" class="block text-sm font-bold text-gray-800 mb-2">Contact Number</label>
+                        <input type="text" name="contactNumber" id="contactNumber" required class="w-full p-3 text-gray-800" placeholder="Enter your contact number" aria-label="Contact number">
+                        <p id="contactNumber-error" class="error-message">Please enter a valid contact number (at least 7 characters).</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="address" class="block text-sm font-bold text-gray-800 mb-2">Address</label>
+                        <textarea name="address" id="address" required class="w-full p-3 text-gray-800" rows="3" maxlength="200" placeholder="Enter your address" aria-label="Address"></textarea>
+                        <p id="address-error" class="error-message">Please enter a valid address (at least 10 characters).</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="description" class="block text-sm font-bold text-gray-800 mb-2">About You</label>
+                        <textarea name="description" id="description" required class="w-full p-3 text-gray-800" rows="5" maxlength="500" placeholder="Describe your waste management services or efforts" aria-label="Description of waste management services or efforts"></textarea>
+                        <p id="description-error" class="error-message">Please provide a valid description (at least 10 characters).</p>
+                    </div>
+                    <button type="submit" class="btn w-full p-3">Register Now</button>
+                </form>
+                <p id="formMessage" class="text-sm text-center text-gray-600 mt-4 hidden"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Interface -->
+    <div id="chatbotContainer">
+        <div id="chatbotHeader">
+            <span>EcoBot 🌍</span>
+            <button id="chatbotCloseBtn" class="text-white text-xl font-semibold">×</button>
+        </div>
+        <div id="chatbotMessages"></div>
+        <input id="chatbotInput" type="text" placeholder="Enter a city or ask for Waste Management contact..." aria-label="Chatbot input">
+    </div>
+    <div id="chatbotToggle" title="Open EcoBot" aria-label="Open EcoBot to find waste management partners">
+        <span>Let’s Find Your Waste Management Partner! 🌱</span>
+    </div>
+
+    <script>
+        // Sample company data with unique details
+        const wasteCompanies = [
+            { 
+                name: "GreenCycle Solutions", 
+                city: "New York", 
+                contactNumber: "1-212-555-1234", 
+                address: "123 Green St, New York, NY 10001" 
+            },
+            { 
+                name: "EcoWaste Warriors", 
+                city: "New York", 
+                contactNumber: "1-212-555-5678", 
+                address: "456 Eco Ave, New York, NY 10002" 
+            },
+            { 
+                name: "CleanCity Services", 
+                city: "Los Angeles", 
+                contactNumber: "1-310-555-9012", 
+                address: "789 Clean Rd, Los Angeles, CA 90001" 
+            },
+            { 
+                name: "RecyclePro", 
+                city: "Chicago", 
+                contactNumber: "1-312-555-3456", 
+                address: "321 Recycle Blvd, Chicago, IL 60601" 
+            },
+            { 
+                name: "Sustainable Disposal Co.", 
+                city: "Los Angeles", 
+                contactNumber: "1-310-555-7890", 
+                address: "654 Sustain St, Los Angeles, CA 90002" 
+            }
+        ];
+
+        // Waste Management, Inc. fallback details
+        const wasteManagementInfo = {
+            name: "Waste Management, Inc.",
+            contactNumber: "1-800-545-4560",
+            address: "800 Capitol St, Suite 3000, Houston, TX 77002"
+        };
+
+        // Chatbot functionality
+        const chatbotContainer = document.getElementById('chatbotContainer');
+        const chatbotMessages = document.getElementById('chatbotMessages');
+        const chatbotInput = document.getElementById('chatbotInput');
+        const chatbotToggle = document.getElementById('chatbotToggle');
+        const chatbotCloseBtn = document.getElementById('chatbotCloseBtn');
+
+        function addChatbotMessage(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chatbot-message', type);
+            messageDiv.textContent = text;
+            chatbotMessages.appendChild(messageDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        function suggestCompanies(input) {
+            const trimmedInput = input.trim();
+            if (trimmedInput.length < 2) {
+                addChatbotMessage('Please enter a city name or query with at least 2 characters.', 'bot-message');
+                return;
+            }
+
+            const lowerInput = trimmedInput.toLowerCase();
+
+            // Check if user is asking for Waste Management contact info explicitly
+            if (lowerInput.includes('contact') || lowerInput.includes('waste management') || lowerInput.includes('wm')) {
+                addChatbotMessage(`Details for Waste Management, Inc.:\nName: ${wasteManagementInfo.name}\nContact Number: ${wasteManagementInfo.contactNumber}\nAddress: ${wasteManagementInfo.address}`, 'bot-message');
+                return;
+            }
+
+            // Assume input is a city and suggest partners
+            addChatbotMessage(`Looking for waste management companies in ${trimmedInput}...`, 'bot-message');
+            const filteredCompanies = wasteCompanies.filter(comp => 
+                comp.city.toLowerCase().includes(lowerInput)
+            );
+
+            if (filteredCompanies.length > 0) {
+                addChatbotMessage(`Waste management partners in or near ${trimmedInput}:`, 'bot-message');
+                filteredCompanies.forEach(comp => {
+                    addChatbotMessage(`Name: ${comp.name}\nContact Number: ${comp.contactNumber}\nAddress: ${comp.address}`, 'bot-message');
+                });
+            } else {
+                addChatbotMessage(`No local partners found for ${trimmedInput}. Contact Waste Management, Inc. for services:\nName: ${wasteManagementInfo.name}\nContact Number: ${wasteManagementInfo.contactNumber}\nAddress: ${wasteManagementInfo.address}`, 'bot-message');
+                addChatbotMessage(`Alternatively, encourage others to register as partners!`, 'bot-message');
+            }
+        }
+
+        chatbotToggle.addEventListener('click', () => {
+            chatbotContainer.style.display = 'flex';
+            if (!chatbotMessages.children.length) {
+                addChatbotMessage('Hi! Enter a city to find waste management partners or ask for Waste Management contact details.', 'bot-message');
+            }
+            chatbotInput.focus();
+        });
+
+        chatbotCloseBtn.addEventListener('click', () => {
+            chatbotContainer.style.display = 'none';
+        });
+
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && chatbotInput.value.trim()) {
+                const userInput = chatbotInput.value.trim();
+                addChatbotMessage(userInput, 'user-message');
+                suggestCompanies(userInput);
+                chatbotInput.value = '';
+            }
+        });
+
+        // Canvas Animation: Healing Earth
+        const canvas = document.getElementById('earthCanvas');
+        const ctx = canvas.getContext('2d');
+        let healing = false;
+        let healingProgress = 0;
+        let isHappy = false;
+        let smileFactor = 0;
+        let cheekOpacity = 0;
+        const particles = [];
+
+        // Initialize particles
+        function initParticles() {
+            for (let i = 0; i < 30; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 4 + 1,
+                    opacity: 0,
+                    speedX: (Math.random() - 0.5) * 0.7,
+                    speedY: (Math.random() - 0.5) * 0.7
+                });
+            }
+        }
+
+        // Linear interpolation
+        function lerp(start, end, t) {
+            return start + (end - start) * t;
+        }
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Sky transition
+            const skyR = lerp(100, 80, healingProgress);
+            const skyG = lerp(200, 147, healingProgress);
+            const skyB = lerp(240, 245, healingProgress);
+            ctx.fillStyle = `rgb(${skyR}, ${skyG}, ${skyB})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Earth
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            // Ocean
+            ctx.fillStyle = '#00a1ff';
+            ctx.beginPath();
+            ctx.arc(0, 0, 120, 0, Math.PI * 2);
+            ctx.fill();
+            // Continents
+            ctx.fillStyle = '#16a34a';
+            ctx.beginPath();
+            ctx.moveTo(-50, -70);
+            ctx.quadraticCurveTo(-60, -40, -30, -30);
+            ctx.quadraticCurveTo(-40, -10, 0, -20);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(40, 30);
+            ctx.quadraticCurveTo(60, 40, 30, 50);
+            ctx.quadraticCurveTo(20, 30, 40, 30);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(-20, 40);
+            ctx.quadraticCurveTo(-10, 60, 10, 50);
+            ctx.closePath();
+            ctx.fill();
+            // Smog
+            ctx.fillStyle = `rgba(80, 80, 80, ${(1 - healingProgress) * 0.4})`;
+            ctx.beginPath();
+            ctx.arc(0, 0, 120, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Smiling face when happy
+            if (isHappy) {
+                // Update smile factor and cheek opacity
+                smileFactor = Math.min(smileFactor + 0.02, 1);
+                cheekOpacity = Math.min(cheekOpacity + 0.02, 0.8);
+                // Eyes
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(-35, -25, 12, 0, Math.PI * 2);
+                ctx.arc(35, -25, 12, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-30, -30, 4, 0, Math.PI * 2);
+                ctx.arc(40, -30, 4, 0, Math.PI * 2);
+                ctx.fill();
+                // Smile
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                const smileWidth = 50 + 15 * smileFactor;
+                ctx.arc(0, 25, smileWidth / 2, 0, Math.PI, false);
+                ctx.stroke();
+                // Cheeks
+                ctx.fillStyle = `rgba(255, 182, 193, ${cheekOpacity})`;
+                ctx.beginPath();
+                ctx.arc(-60, 15, 12, 0, Math.PI * 2);
+                ctx.arc(60, 15, 12, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                // Reduce smile and cheeks when not happy
+                smileFactor = Math.max(smileFactor - 0.02, 0);
+                cheekOpacity = Math.max(cheekOpacity - 0.02, 0);
+            }
+
+            ctx.restore();
+
+            // Draw trees
+            for (let i = 0; i < 4; i++) {
+                const treeHeight = 60 * healingProgress;
+                const x = 80 + i * 80;
+                ctx.fillStyle = '#7f5539';
+                ctx.fillRect(x - 6, canvas.height - treeHeight - 30, 12, treeHeight);
+                ctx.fillStyle = '#22c55e';
+                ctx.beginPath();
+                ctx.arc(x, canvas.height - treeHeight - 30, 25, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw particles
+            if (isHappy) {
+                particles.forEach(p => {
+                    ctx.fillStyle = `rgba(255, 215, 0, ${p.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    p.opacity += (Math.random() - 0.5) * 0.15;
+                    p.opacity = Math.max(0, Math.min(1, p.opacity));
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                });
+            }
+
+            // Text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px Inter, Roboto, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(
+                isHappy ? "Earth Loves You! Keep Going!" :
+                healing ? "You're Healing Earth!" :
+                "Be Earth's Hero: Recycle!",
+                canvas.width / 2, canvas.height - 30
+            );
+
+            requestAnimationFrame(animate);
+        }
+
+        // Start animation
+        initParticles();
+        animate();
+
+        // Show disposal options and make Earth happy
+        function showDisposalOptions() {
+            const plasticType = document.getElementById('plasticType').value;
+            const disposalOptions = document.getElementById('disposalOptions');
+            disposalOptions.innerHTML = '';
+            plasticData[plasticType].disposalMethods.forEach(method => {
+                const li = document.createElement('li');
+                li.textContent = method;
+                li.classList.add('disposal-item', 'mt-2', 'text-sm');
+                disposalOptions.appendChild(li);
+            });
+            disposalOptions.classList.remove('hidden');
+            isHappy = true;
+            healing = true;
+            document.getElementById('saveEarthBtn').classList.add('hidden');
+        }
+
+        // Calculator JavaScript
+        const plasticData = {
+            PMMA: {
+                emissionFactor: 2.9,
+                disposalMethods: [
+                    "Recycle at specialized facilities accepting acrylic plastics.",
+                    "Repurpose into decorative items like frames or panels for DIY projects.",
+                    "Dispose through municipal waste systems to avoid burning."
+                ]
+            },
+            PC: {
+                emissionFactor: 3.0,
+                disposalMethods: [
+                    "Recycle through specialized polycarbonate recycling programs.",
+                    "Reuse for durable storage solutions or protective covers.",
+                    "Dispose in municipal waste systems, avoiding incineration due to high emissions."
+                ]
+            },
+            PE: {
+                emissionFactor: 2.95,
+                disposalMethods: [
+                    "Recycle into new packaging or plastic lumber at recycling centers.",
+                    "Reuse clean PE bags or containers for storage or crafts.",
+                    "Dispose in municipal waste systems to prevent burning."
+                ]
+            },
+            PP: {
+                emissionFactor: 3.0,
+                disposalMethods: [
+                    "Recycle into automotive parts or new packaging at recycling facilities.",
+                    "Reuse for storage or organizational purposes if intact.",
+                    "Dispose in municipal waste systems to prevent burning."
+                ]
+            },
+            PET: {
+                emissionFactor: 2.95,
+                disposalMethods: [
+                    "Recycle into new bottles or textiles at local recycling facilities.",
+                    "Reuse clean PET containers for non-food storage.",
+                    "Participate in deposit-return schemes for PET bottles where available."
+                ]
+            },
+            PVC: {
+                emissionFactor: 2.8,
+                disposalMethods: [
+                    "Avoid burning due to toxic hydrochloric acid and dioxin emissions; recycle at specialized PVC facilities.",
+                    "Dispose through hazardous waste collection programs if recycling isn’t possible.",
+                    "Contact manufacturers for take-back programs for PVC products."
+                ]
+            },
+            ABS: {
+                emissionFactor: 3.1,
+                disposalMethods: [
+                    "Recycle at facilities accepting ABS plastics, often found in electronics recycling programs.",
+                    "Repurpose for crafting durable items like tool organizers.",
+                    "Dispose in municipal waste systems to avoid burning, as it releases toxic pollutants."
+                ]
+            }
+        };
+
+        function calculateEmission() {
+            const plasticType = document.getElementById('plasticType').value;
+            const mass = parseFloat(document.getElementById('mass').value) || 0;
+            const resultDiv = document.getElementById('result');
+            const emissionResult = document.getElementById('emissionResult');
+            const disposalMethods = document.getElementById('disposalMethods');
+            const emissionMessage = document.getElementById('emissionMessage');
+            const saveEarthBtn = document.getElementById('saveEarthBtn');
+            const disposalOptions = document.getElementById('disposalOptions');
+
+            resultDiv.classList.add('hidden');
+            saveEarthBtn.classList.add('hidden');
+            disposalOptions.classList.add('hidden');
+            emissionMessage.textContent = 'Calculate emissions to see how you can save Earth!';
+
+            if (mass <= 0) {
+                emissionResult.innerHTML = '';
+                disposalMethods.innerHTML = '';
+                return;
+            }
+
+            const emission = (plasticData[plasticType].emissionFactor * mass).toFixed(2);
+            emissionResult.innerHTML = `Burning ${mass} kg of ${plasticType} releases <strong>${emission} kg of CO2 equivalent</strong>. Take action to stop this and save Earth!`;
+
+            disposalMethods.innerHTML = '';
+            plasticData[plasticType].disposalMethods.forEach(method => {
+                const li = document.createElement('li');
+                li.textContent = method;
+                li.classList.add('disposal-item', 'mt-2', 'text-sm');
+                disposalMethods.appendChild(li);
+            });
+
+            resultDiv.classList.remove('hidden');
+            emissionMessage.textContent = `Burning ${mass} kg of ${plasticType} emits ${emission} kg CO2e. Ready to be Earth's hero?`;
+            saveEarthBtn.classList.remove('hidden');
+        }
+
+        async function shareResult() {
+            const plasticType = document.getElementById('plasticType').value;
+            const mass = parseFloat(document.getElementById('mass').value);
+            let text = `I'm an Earth Hero, you can be one too! 🌍 Join me with the Plastic Impact Calculator: ${window.location.href}`;
+            if (mass && mass > 0) {
+                const emission = (plasticData[plasticType].emissionFactor * mass).toFixed(2);
+                text = `Burning ${mass} kg of ${plasticType} emits ${emission} kg CO2e. I'm an Earth Hero by choosing to recycle! You can be one too! 🌍 Join me: ${window.location.href}`;
+            }
+
+            // Create a canvas for the image
+            const shareCanvas = document.createElement('canvas');
+            shareCanvas.width = 600;
+            shareCanvas.height = 300;
+            const shareCtx = shareCanvas.getContext('2d');
+
+            // Draw background
+            const gradient = shareCtx.createLinearGradient(0, 0, 600, 300);
+            gradient.addColorStop(0, '#a7f3d0');
+            gradient.addColorStop(1, '#93c5fd');
+            shareCtx.fillStyle = gradient;
+            shareCtx.fillRect(0, 0, 600, 300);
+
+            // Draw text
+            shareCtx.fillStyle = '#1f2937';
+            shareCtx.font = 'bold 40px Inter, Roboto, sans-serif';
+            shareCtx.textAlign = 'center';
+            shareCtx.fillText("I'm an Earth Hero!", 300, 100);
+            shareCtx.font = 'bold 30px Inter, Roboto, sans-serif';
+            shareCtx.fillText("You can be one too! 🌍", 300, 150);
+            shareCtx.font = '20px Inter, Roboto, sans-serif';
+            shareCtx.fillText("Join me at the Plastic Impact Calculator", 300, 200);
+            shareCtx.fillStyle = '#2563eb';
+            shareCtx.font = 'bold 18px Inter, Roboto, sans-serif';
+            shareCtx.fillText(window.location.href, 300, 230);
+
+            // Add Earth emoji
+            shareCtx.font = '60px Inter, Roboto, sans-serif';
+            shareCtx.fillText('🌍', 300, 280);
+
+            // Convert canvas to Blob
+            try {
+                const blob = await new Promise(resolve => shareCanvas.toBlob(resolve, 'image/png'));
+                const file = new File([blob], 'earth-hero.png', { type: 'image/png' });
+
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: 'Save Earth: Plastic Impact Calculator',
+                        text,
+                        url: window.location.href,
+                        files: [file]
+                    });
+                } else {
+                    // Fallback: Prompt to copy text and show image
+                    const img = new Image();
+                    img.src = shareCanvas.toDataURL('image/png');
+                    img.style.maxWidth = '100%';
+                    img.style.borderRadius = '8px';
+                    const message = document.createElement('div');
+                    message.style.position = 'fixed';
+                    message.style.top = '50%';
+                    message.style.left = '50%';
+                    message.style.transform = 'translate(-50%, -50%)';
+                    message.style.background = 'white';
+                    message.style.padding = '20px';
+                    message.style.borderRadius = '12px';
+                    message.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)';
+                    message.style.zIndex = '1000';
+                    message.style.textAlign = 'center';
+                    const textNode = document.createTextNode(`${text}\n\nCopy the text above and share this image manually:`);
+                    message.appendChild(textNode);
+                    message.appendChild(document.createElement('br'));
+                    message.appendChild(img);
+                    const closeBtn = document.createElement('button');
+                    closeBtn.textContent = 'Close';
+                    closeBtn.style.marginTop = '10px';
+                    closeBtn.style.padding = '8px 16px';
+                    closeBtn.style.background = '#22c55e';
+                    closeBtn.style.color = 'white';
+                    closeBtn.style.borderRadius = '8px';
+                    closeBtn.style.cursor = 'pointer';
+                    closeBtn.onclick = () => message.remove();
+                    message.appendChild(closeBtn);
+                    document.body.appendChild(message);
+                    prompt('Copy this to share:', text);
+                }
+            } catch (err) {
+                console.error('Share failed:', err);
+                prompt('Copy this to share:', text);
+            }
+        }
+
+        // Add tooltips dynamically
+        document.querySelectorAll('#plasticType option').forEach(option => {
+            const tooltipText = option.getAttribute('data-tooltip');
+            if (tooltipText) {
+                const span = document.createElement('span');
+                span.className = 'tooltiptext';
+                span.textContent = tooltipText;
+                option.parentElement.classList.add('tooltip');
+                option.parentElement.appendChild(span);
+            }
+        });
+
+        // Form handling for waste management registration
+        const registerForm = document.getElementById('registerForm');
+        const formMessage = document.getElementById('formMessage');
+
+        // Form validation and submission
+        registerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const contactNumber = document.getElementById('contactNumber').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const nameError = document.getElementById('name-error');
+            const cityError = document.getElementById('city-error');
+            const contactNumberError = document.getElementById('contactNumber-error');
+            const addressError = document.getElementById('address-error');
+            const descError = document.getElementById('description-error');
+
+            let isValid = true;
+
+            if (!name || name.length < 2) {
+                nameError.style.display = 'block';
+                isValid = false;
+            } else {
+                nameError.style.display = 'none';
+            }
+
+            if (!city || city.length < 2) {
+                cityError.style.display = 'block';
+                isValid = false;
+            } else {
+                cityError.style.display = 'none';
+            }
+
+            if (!contactNumber || contactNumber.length < 7) {
+                contactNumberError.style.display = 'block';
+                isValid = false;
+            } else {
+                contactNumberError.style.display = 'none';
+            }
+
+            if (!address || address.length < 10) {
+                addressError.style.display = 'block';
+                isValid = false;
+            } else {
+                addressError.style.display = 'none';
+            }
+
+            if (!description || description.length < 10) {
+                descError.style.display = 'block';
+                isValid = false;
+            } else {
+                descError.style.display = 'none';
+            }
+
+            if (isValid) {
+                try {
+                    const formData = new FormData(registerForm);
+                    const response = await fetch(registerForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        formMessage.textContent = 'Thank you for registering! Your details are under review.';
+                        formMessage.classList.remove('text-red-600', 'hidden');
+                        formMessage.classList.add('text-green-600');
+                        registerForm.reset();
+                    } else {
+                        throw new Error('Registration failed');
+                    }
+                } catch (error) {
+                    formMessage.textContent = 'Oops! Something went wrong. Please try again later.';
+                    formMessage.classList.remove('text-green-600', 'hidden');
+                    formMessage.classList.add('text-red-600');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
